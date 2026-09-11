@@ -7,10 +7,6 @@ interface AuthState {
   loading: boolean;
 }
 
-/**
- * Следит за сессией Supabase Auth: восстанавливает её при загрузке и
- * подписывается на изменения (вход/выход/обновление токена).
- */
 export function useAuth(): AuthState {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,5 +39,14 @@ export async function signIn(email: string, password: string): Promise<void> {
 
 export async function signOut(): Promise<void> {
   const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+}
+
+/** Вход через Google (OAuth2). Провайдер настроен в Supabase → Authentication → Providers. */
+export async function signInWithGoogle(): Promise<void> {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  });
   if (error) throw error;
 }
