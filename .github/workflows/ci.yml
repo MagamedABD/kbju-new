@@ -21,7 +21,7 @@ jobs:
           cache: npm
 
       - name: Установка зависимостей
-        run: npm ci
+        run: npm install
 
       - name: Аудит production-зависимостей
         run: npm audit --omit=dev || true
