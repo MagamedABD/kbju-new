@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { signIn, signUp } from '../../shared/lib/use-auth';
+import { signIn, signUp, signInWithGoogle } from '../../shared/lib/use-auth';
+import { trackEvent } from '../../shared/lib/analytics';
 import { toUserMessage } from '../../shared/api/api-error';
 import { isSupabaseConfigured } from '../../shared/api/supabase';
 import { cn } from '../../shared/lib/cn';
@@ -26,9 +27,11 @@ export function AuthForm() {
     try {
       if (mode === 'signup') {
         await signUp(email, password);
+        trackEvent('sign_up');
         setNotice('Аккаунт создан. Если включено подтверждение email — проверьте почту.');
       } else {
         await signIn(email, password);
+        trackEvent('sign_in');
       }
     } catch (e) {
       setError(toUserMessage(e));
@@ -99,6 +102,26 @@ export function AuthForm() {
         className="mt-5 w-full rounded-2xl bg-brand py-3.5 text-sm font-semibold text-white disabled:opacity-40"
       >
         {busy ? 'Секунду…' : mode === 'signin' ? 'Войти' : 'Зарегистрироваться'}
+      </button>
+
+      <div className="my-4 flex items-center gap-3 text-xs text-muted">
+        <span className="h-px flex-1 bg-line" />или<span className="h-px flex-1 bg-line" />
+      </div>
+
+      <button
+        type="button"
+        onClick={async () => {
+          setError(null);
+          try {
+            trackEvent('sign_in_google');
+            await signInWithGoogle();
+          } catch (e) {
+            setError(toUserMessage(e));
+          }
+        }}
+        className="w-full rounded-2xl border border-line bg-card py-3 text-sm font-semibold text-default"
+      >
+        Войти через Google
       </button>
 
       <button
