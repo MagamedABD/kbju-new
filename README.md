@@ -99,3 +99,4 @@ npm run test:watch
 На Vercel те же две переменные добавляются в **Settings → Environment Variables**.
 
 Полное описание архитектуры, схемы БД, API и безопасности — в [`backend_documentation.md`](./backend_documentation.md).
+TEST
